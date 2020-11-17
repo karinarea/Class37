@@ -1,64 +1,47 @@
-var ball, database, position;
-
+var database, gs = 0, pc, allP;
+var form, player, game;
+var car1, car2, car3, car4, cars;
 function setup(){
-    createCanvas(500,500);
+    createCanvas(displayWidth,displayHeight);
 
     database = firebase.database();
-
-    ball = createSprite(250,250,10,10);
-    ball.shapeColor = "red";
+    game = new Game();
+    game.getState();
+    game.start();
     
-    var ballpos = database.ref("Ball/Position");
-    ballpos.on("value",);
-   
 }
 
 function draw(){
-    background("white");
-    if(keyDown(LEFT_ARROW)){
-        changePosition(-1,0);
-    }
-    else if(keyDown(RIGHT_ARROW)){
-        changePosition(1,0);
-    }
-    else if(keyDown(UP_ARROW)){
-        changePosition(0,-1);
-    }
-    else if(keyDown(DOWN_ARROW)){
-        changePosition(0,+1);
-    }
-    drawSprites();
+   if(pc === 4){
+       game.update(1);
+   }
+   if(gs === 1) {
+       clear();     //clears the canvas
+       game.play();
+   }
 }
 
-function changePosition(x,y){
-    database.ref("Ball/Position").set({
-        x:position.x +x,
-        y:position.y + y
-    });
-   
-    ball.x = ball.x + x;
-    ball.y = ball.y + y;
-}
 
-function Read (data) {
-    position = data.val();
-    ball.x = position.x;
-    ball.y = position.y;
-}
-
-function error () {
-    console.log("error");
-}
 
 
 /*
-.ref() ==> Refers to the location of the database value that we want
+Object Oriented Programming (OOP)
 
-.on() ==> READ ==> creates a listener that keeps listening to the changes in the database
-          1. Reads the value that is being changed
-          2. To show error if there is any problem while reading
+1. Form
+    - input box
+    - play button
+    - button pressed - player name --> database
+                     - New player created
 
+2. Player
+    - info (name, distance, rank)
+    - player count (Read & write into the database)
 
-.set() ==> WRITE ==> To change the value in the database
+3. Game
+    - gameStates
+        - WAIT (0) - form (lobby)
+        - PLAY (1)
+        - END (2)
+    - Read & write gamestate into the database
 
 */
